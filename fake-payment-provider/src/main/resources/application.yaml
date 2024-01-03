@@ -1,0 +1,23 @@
+server:
+  port: 8090
+  shutdown: graceful
+  error:
+    include-message: always
+
+spring:
+  r2dbc:
+    url: r2dbc:postgres://localhost:5436/fake-payment-provider
+    username: payment-provider
+    password: payment-provider
+    properties:
+      schema: payment-provider
+  flyway:
+    enabled: on
+    url: jdbc:postgres://localhost:5436/fake-payment-provider
+    user: ${spring.r2dbc.username}
+    password: ${spring.r2dbc.password}
+    default-schema: ${spring.r2dbc.properties.schema}
+    locations: classpath:db/postgres/migration
+  docker:
+    compose:
+      enabled: false
