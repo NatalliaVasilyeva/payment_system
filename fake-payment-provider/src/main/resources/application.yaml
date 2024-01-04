@@ -13,11 +13,11 @@ spring:
       schema: payment-provider
   flyway:
     enabled: on
-    url: jdbc:postgres://localhost:5436/fake-payment-provider
+    url: jdbc:postgresql://localhost:5436/fake-payment-provider
     user: ${spring.r2dbc.username}
     password: ${spring.r2dbc.password}
     default-schema: ${spring.r2dbc.properties.schema}
-    locations: classpath:db/postgres/migration
+    locations: classpath:db/migration
   docker:
     compose:
       enabled: false
