@@ -26,6 +26,8 @@ public class Wallet implements Persistable<UUID> {
 
     private UUID merchantId;
 
+    private String currency;
+
     private BigDecimal balance;
 
     @Transient

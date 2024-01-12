@@ -5,6 +5,8 @@ server:
     include-message: always
 
 spring:
+  main:
+    web-application-type: reactive
   r2dbc:
     url: r2dbc:postgres://localhost:5436/fake-payment-provider
     username: payment-provider
@@ -21,3 +23,14 @@ spring:
   docker:
     compose:
       enabled: false
+
+service:
+  source:
+    webhook:
+      transaction:
+        host: http://localhost:8090/api/v1/webhook/transaction
+      payout:
+        host: http://localhost:8090/api/v1/webhook/payout
+
+webClient:
+  readWriteTimeoutMs: 20000

@@ -27,6 +27,8 @@ public class Webhook implements Persistable<UUID> {
     @Id
     private UUID id;
 
+    private UUID merchantId;
+
     private UUID merchantTransactionId;
 
     private String notificationUrl;

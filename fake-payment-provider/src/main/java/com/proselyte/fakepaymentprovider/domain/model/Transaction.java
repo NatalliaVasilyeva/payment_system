@@ -41,6 +41,8 @@ public class Transaction implements Persistable<UUID> {
     @LastModifiedDate
     private LocalDateTime updatedAt;
 
+    private String notificationUrl;
+
     private String cardNumber;
 
     private String cardExpirationDate;
