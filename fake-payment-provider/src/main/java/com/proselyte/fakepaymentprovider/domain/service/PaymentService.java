@@ -35,7 +35,6 @@ public class PaymentService {
     }
 
 
-    @Transactional
     public Mono<TopUpShotResponseDto> topUp(TopUpRequestDto topUpRequestDto, UUID merchantId) {
         return Mono.just(topUpRequestDto)
             .map(dto -> TransactionMapper.toTransaction(dto, merchantId))
@@ -58,13 +57,11 @@ public class PaymentService {
             .map(TransactionMapper::toTopUpShotResponseDto);
     }
 
-    @Transactional
     public Mono<Transaction> updateTransaction(Transaction transaction) {
         return Mono.just(transaction)
             .flatMap(transactionRepository::save);
     }
 
-    @Transactional
     public Flux<TransactionResponseDto> findAllTransactionsByMerchantIdAndFilter(UUID merchantId, LocalDateTime startDate, LocalDateTime endDate) {
 
         return transactionRepository.findAllByCreatedAtBetween(startDate, endDate, merchantId)
@@ -72,13 +69,12 @@ public class PaymentService {
             .flatMapIterable(TransactionMapper::toTransactionResponseDtoList);
     }
 
-    @Transactional
+    
     public Flux<Transaction> findAllByTransactional(Boolean transactional) {
 
         return transactionRepository.findAllByTransactional(transactional);
     }
 
-    @Transactional
     public Mono<TransactionResponseDto> findTransactionById(UUID transactionId) {
 
         return transactionRepository.findById(transactionId)
@@ -86,7 +82,6 @@ public class PaymentService {
 
     }
 
-    @Transactional
     public Mono<PayOutShotResponseDto> payOut(PayOutRequestDto payOutRequestDto) {
 
         return Mono.empty();
