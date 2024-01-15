@@ -35,8 +35,9 @@ public class WebSecurityConfig {
         return http
             .csrf(ServerHttpSecurity.CsrfSpec::disable)
             .authorizeExchange(exchanges ->
-                exchanges.anyExchange()
-                    .authenticated())
+//                exchanges.pathMatchers("/api/v1/webhook/**").permitAll()
+//                    .anyExchange().authenticated())
+                exchanges.anyExchange().permitAll())
             .httpBasic(withDefaults())
             .exceptionHandling(handling ->
                 handling.authenticationEntryPoint((swe, e) -> {

@@ -1,5 +1,8 @@
 package com.proselyte.fakepaymentprovider.domain.service;
 
+import com.proselyte.fakepaymentprovider.domain.dto.MerchantRequestDto;
+import com.proselyte.fakepaymentprovider.domain.dto.MerchantResponseDto;
+import com.proselyte.fakepaymentprovider.domain.mapper.MerchantMapper;
 import com.proselyte.fakepaymentprovider.domain.model.SecurityUserDetails;
 import com.proselyte.fakepaymentprovider.domain.repository.MerchantRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +23,15 @@ import java.util.Objects;
 public class MerchantService implements ReactiveUserDetailsService {
 
     private final MerchantRepository merchantRepository;
+
+    public Mono<MerchantResponseDto> createMerchant(MerchantRequestDto dto) {
+        return Mono.just(dto)
+            .map(MerchantMapper::toMerchant)
+            .flatMap(merchantRepository::save)
+            .map(MerchantMapper::toMerchantResponseDto)
+            .doOnSuccess(u ->
+            log.info("Merchant service - merchant: {} was created", u));
+    }
 
     @Override
     public Mono<UserDetails> findByUsername(String clientId) {
