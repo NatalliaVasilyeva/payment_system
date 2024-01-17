@@ -1,6 +1,7 @@
 package com.proselyte.fakepaymentprovider.infrastructure.config;
 
 import com.proselyte.fakepaymentprovider.infrastructure.security.AuthenticationManager;
+import com.proselyte.fakepaymentprovider.infrastructure.security.BasicServerAuthenticationConverter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -38,7 +39,7 @@ public class WebSecurityConfig {
 //                exchanges.pathMatchers("/api/v1/webhook/**").permitAll()
 //                    .anyExchange().authenticated())
                 exchanges.anyExchange().permitAll())
-            .httpBasic(withDefaults())
+//            .httpBasic(withDefaults())
             .exceptionHandling(handling ->
                 handling.authenticationEntryPoint((swe, e) -> {
                         log.error("SecurityWebFilterChain - unauthorized error: {}", e.getMessage());
@@ -56,6 +57,7 @@ public class WebSecurityConfig {
     @Bean
     public AuthenticationWebFilter basicAuthenticationFilter(AuthenticationManager authenticationManager) {
         AuthenticationWebFilter basicAuthenticationFilter = new AuthenticationWebFilter(authenticationManager);
+        basicAuthenticationFilter.setServerAuthenticationConverter(new BasicServerAuthenticationConverter());
         basicAuthenticationFilter.setRequiresAuthenticationMatcher(ServerWebExchangeMatchers.pathMatchers("/**"));
 
         return basicAuthenticationFilter;

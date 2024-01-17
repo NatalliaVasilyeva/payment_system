@@ -1,13 +1,13 @@
 CREATE TABLE IF NOT EXISTS merchant
 (
-    id            uuid PRIMARY KEY,
+    id            uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     client_id     varchar(64) NOT NULL UNIQUE,
     client_secret bytea       NOT NULL UNIQUE
 );
 
 CREATE TABLE IF NOT EXISTS transaction
 (
-    id                      uuid PRIMARY KEY,
+    id                      uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     merchant_id             uuid            NOT NULL,
     payment_method          varchar(64)     NOT NULL,
     amount                  numeric(10, 20) NOT NULL,
@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS transaction
 
 CREATE TABLE IF NOT EXISTS wallet
 (
-    id          uuid PRIMARY KEY,
+    id          uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     merchant_id uuid        NOT NULL,
     currency    varchar(16) NOT NULL,
     balance     numeric     NOT NULL DEFAULT 0,
@@ -46,7 +46,7 @@ CREATE TABLE IF NOT EXISTS wallet
 
 CREATE TABLE IF NOT EXISTS webhook
 (
-    id                      uuid PRIMARY KEY,
+    id                      uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     merchant_id             uuid            NOT NULL,
     merchant_transaction_id uuid            NOT NULL UNIQUE,
     notification_url        VARCHAR(128)    NOT NULL,

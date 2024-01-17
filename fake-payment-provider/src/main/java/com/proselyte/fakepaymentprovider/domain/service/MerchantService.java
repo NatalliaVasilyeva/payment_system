@@ -29,8 +29,7 @@ public class MerchantService implements ReactiveUserDetailsService {
             .map(MerchantMapper::toMerchant)
             .flatMap(merchantRepository::save)
             .map(MerchantMapper::toMerchantResponseDto)
-            .doOnSuccess(u ->
-            log.info("Merchant service - merchant: {} was created", u));
+            .doOnSuccess(u -> log.info("Merchant service - merchant: {} was created", u));
     }
 
     @Override

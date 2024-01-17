@@ -21,13 +21,13 @@ public record TopUpRequestDto(
 
     LocalDateTime updatedAt,
 
-    CardRequestDto cardRequestDto,
+    CardRequestDto cardData,
 
     String language,
 
     String notificationUrl,
 
-    CustomerRequestDto customerRequestDto
+    CustomerRequestDto customer
     ) {
 
     public LocalDateTime createdAt() {

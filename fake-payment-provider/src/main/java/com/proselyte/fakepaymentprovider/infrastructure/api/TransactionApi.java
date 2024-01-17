@@ -9,6 +9,7 @@ import com.proselyte.fakepaymentprovider.domain.model.PaymentMessage;
 import com.proselyte.fakepaymentprovider.domain.model.PaymentMethod;
 import com.proselyte.fakepaymentprovider.domain.service.PaymentService;
 import com.proselyte.fakepaymentprovider.infrastructure.util.ReactiveContextHolder;
+import com.proselyte.fakepaymentprovider.infrastructure.util.Validator;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -51,7 +52,7 @@ public class TransactionApi {
     @PostMapping(value = TRANSACTION_URL_NAME + "/topUp", consumes = MediaType.APPLICATION_JSON_VALUE, produces = {MediaType.APPLICATION_JSON_VALUE})
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Create top up transaction")
-    @PreAuthorize("hasAnyAuthority('CLIENT', 'USER')")
+//    @PreAuthorize("hasAnyAuthority('CLIENT', 'USER')")
     public Mono<TopUpShotResponseDto> topUp(@Valid @RequestBody TopUpRequestDto topUpRequestDto) {
 
         // input validation
@@ -65,6 +66,9 @@ public class TransactionApi {
         if (amount.equals(BigDecimal.ZERO)) {
             throw new DomainResponseException(HttpStatus.BAD_REQUEST, PaymentMessage.TRANSACTION_MIN_AMOUNT.name());
         }
+
+        Validator.validateCardExpirationDate(topUpRequestDto.cardData().expDate());
+
         return ReactiveContextHolder.getMerchantId()
             .flatMap(id -> paymentService.topUp(topUpRequestDto, id));
 
