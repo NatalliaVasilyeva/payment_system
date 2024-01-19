@@ -7,6 +7,7 @@ import com.proselyte.fakepaymentprovider.domain.exception.DomainResponseExceptio
 import com.proselyte.fakepaymentprovider.domain.model.PaymentMessage;
 import com.proselyte.fakepaymentprovider.domain.model.PaymentMethod;
 import com.proselyte.fakepaymentprovider.domain.service.PaymentService;
+import com.proselyte.fakepaymentprovider.domain.service.TransactionService;
 import com.proselyte.fakepaymentprovider.infrastructure.util.ReactiveContextHolder;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -44,6 +45,7 @@ public class PayoutApi {
     private static final String PAYOUT_URL_NAME = "payments/payout";
 
     private final PaymentService paymentService;
+    private final TransactionService transactionService;
 
 
     @PostMapping(value = PAYOUT_URL_NAME, consumes = MediaType.APPLICATION_JSON_VALUE, produces = {MediaType.APPLICATION_JSON_VALUE})
@@ -74,8 +76,8 @@ public class PayoutApi {
     @PreAuthorize("hasAnyAuthority('CLIENT', 'USER')")
     public Mono<TransactionResponseDto> getPayoutDetails(@Parameter(required = true) @PathVariable @Valid @NotNull UUID uuid) {
 
-        return ReactiveContextHolder.getMerchantId()
-            .flatMap(id -> paymentService.findTransactionById(uuid));
+        return ReactiveContextHolder.getMerchantClientId()
+            .flatMap(id -> transactionService.findTransactionById(uuid));
 
     }
 

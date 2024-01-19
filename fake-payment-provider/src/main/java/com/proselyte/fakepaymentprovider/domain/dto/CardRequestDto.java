@@ -7,7 +7,7 @@ public record CardRequestDto(
     String expDate,
 
     @Size(min = 3, max = 3)
-    String cvv
+    Integer cvv
 ) {
 
     public CardRequestDto(String cardNumber) {

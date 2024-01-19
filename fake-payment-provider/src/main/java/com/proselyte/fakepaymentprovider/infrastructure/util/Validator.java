@@ -10,9 +10,9 @@ public class Validator {
     }
 
     public static void validateCardExpirationDate(String expirationDate) {
-        var expDateSplitArray = expirationDate.split(":");
-        var month = Integer.getInteger(expDateSplitArray[0]);
-        var year = Integer.getInteger(expDateSplitArray[1]);
+        var expDateSplitArray = expirationDate.split("/");
+        var month = Integer.valueOf(expDateSplitArray[0]);
+        var year = Integer.valueOf(expDateSplitArray[1]);
         LocalDate currentDate = LocalDate.now();
 
         if (month < currentDate.getMonthValue() && year < currentDate.getYear()) {

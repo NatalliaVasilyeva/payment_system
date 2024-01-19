@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.server.ServerWebInputException;
 
 import java.lang.invoke.MethodHandles;
 
@@ -21,6 +22,18 @@ public class FallbackExceptionHandler {
     public ResponseEntity<ErrorResponse> handleCustomBadRequestExceptions(DomainResponseException ex) {
         LOG.info("Received invalid request payload, throwing exception {}: {}.", ex.getClass().getName(), ex.getMessage(), ex);
         return buildErrorResponseAsEntity(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler({ServerWebInputException.class})
+    public ResponseEntity<ErrorResponse> handleServerWebInputException(ServerWebInputException ex) {
+        LOG.info("Input exception, throwing exception {}: {}.", ex.getClass().getName(), ex.getMessage(), ex);
+        return buildErrorResponseAsEntity(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler({NotificationException.class})
+    public ResponseEntity<ErrorResponse> handleNotificationException(NotificationException ex) {
+        LOG.info("Notification exception, throwing exception {}: {}.", ex.getClass().getName(), ex.getMessage(), ex);
+        return buildErrorResponseAsEntity(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
 

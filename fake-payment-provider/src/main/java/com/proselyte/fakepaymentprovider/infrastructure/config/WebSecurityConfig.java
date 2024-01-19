@@ -1,11 +1,11 @@
 package com.proselyte.fakepaymentprovider.infrastructure.config;
 
-import com.proselyte.fakepaymentprovider.infrastructure.security.AuthenticationManager;
-import com.proselyte.fakepaymentprovider.infrastructure.security.BasicServerAuthenticationConverter;
+//import com.proselyte.fakepaymentprovider.infrastructure.security.AuthenticationManager;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
@@ -31,7 +31,7 @@ public class WebSecurityConfig {
 
 
     @Bean
-    public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http, AuthenticationManager authenticationManager) {
+    public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
 
         return http
             .csrf(ServerHttpSecurity.CsrfSpec::disable)
@@ -39,7 +39,7 @@ public class WebSecurityConfig {
 //                exchanges.pathMatchers("/api/v1/webhook/**").permitAll()
 //                    .anyExchange().authenticated())
                 exchanges.anyExchange().permitAll())
-//            .httpBasic(withDefaults())
+            .httpBasic(withDefaults())
             .exceptionHandling(handling ->
                 handling.authenticationEntryPoint((swe, e) -> {
                         log.error("SecurityWebFilterChain - unauthorized error: {}", e.getMessage());
@@ -50,17 +50,17 @@ public class WebSecurityConfig {
 
                         return Mono.fromRunnable(() -> swe.getResponse().setStatusCode(HttpStatus.FORBIDDEN));
                     }))
-            .addFilterAt(basicAuthenticationFilter(authenticationManager), SecurityWebFiltersOrder.AUTHENTICATION)
+//            .addFilterAt(basicAuthenticationFilter(authenticationManager), SecurityWebFiltersOrder.AUTHENTICATION)
             .build();
     }
 
-    @Bean
-    public AuthenticationWebFilter basicAuthenticationFilter(AuthenticationManager authenticationManager) {
-        AuthenticationWebFilter basicAuthenticationFilter = new AuthenticationWebFilter(authenticationManager);
-        basicAuthenticationFilter.setServerAuthenticationConverter(new BasicServerAuthenticationConverter());
-        basicAuthenticationFilter.setRequiresAuthenticationMatcher(ServerWebExchangeMatchers.pathMatchers("/**"));
-
-        return basicAuthenticationFilter;
-    }
+//    @Bean
+//    public AuthenticationWebFilter basicAuthenticationFilter(AuthenticationManager authenticationManager) {
+//        AuthenticationWebFilter basicAuthenticationFilter = new AuthenticationWebFilter(authenticationManager);
+////        basicAuthenticationFilter.setServerAuthenticationConverter(new BasicServerAuthenticationConverter());
+//        basicAuthenticationFilter.setRequiresAuthenticationMatcher(ServerWebExchangeMatchers.pathMatchers("/**"));
+//
+//        return basicAuthenticationFilter;
+//    }
 
 }

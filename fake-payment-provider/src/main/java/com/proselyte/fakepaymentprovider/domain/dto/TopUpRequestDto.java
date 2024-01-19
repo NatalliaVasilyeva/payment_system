@@ -14,7 +14,6 @@ public record TopUpRequestDto(
 
     String currency,
 
-    @com.proselyte.fakepaymentprovider.infrastructure.util.UUID
     UUID companyTransactionId,
 
     LocalDateTime createdAt,

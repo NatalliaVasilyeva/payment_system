@@ -2,29 +2,29 @@ CREATE TABLE IF NOT EXISTS merchant
 (
     id            uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     client_id     varchar(64) NOT NULL UNIQUE,
-    client_secret bytea       NOT NULL UNIQUE
+    client_secret varchar     NOT NULL UNIQUE
 );
 
 CREATE TABLE IF NOT EXISTS transaction
 (
     id                      uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-    merchant_id             uuid            NOT NULL,
-    payment_method          varchar(64)     NOT NULL,
-    amount                  numeric(10, 20) NOT NULL,
-    currency                varchar(16)     NOT NULL,
-    merchant_transaction_id uuid            NOT NULL UNIQUE,
+    merchant_id             uuid           NOT NULL,
+    payment_method          varchar(64)    NOT NULL,
+    amount                  numeric(10, 2) NOT NULL,
+    currency                varchar(16)    NOT NULL,
+    merchant_transaction_id uuid           NOT NULL UNIQUE,
     created_at              timestamp with time zone,
     updated_at              timestamp with time zone,
-    notification_url        VARCHAR(128)    NOT NULL,
-    card_number             varchar(16)     NOT NULL,
-    card_expirationDate     varchar(10)     NOT NULL,
-    card_cvv                bytea           NOT NULL,
-    language                varchar(64)     NOT NULL,
-    customer_first_name     varchar(64)     NOT NULL,
-    customer_last_name      varchar(64)     NOT NULL,
-    customer_country        varchar(64)     NOT NULL,
-    transactional           boolean         NOT NULL,
-    status                  varchar(16)     NOT NULL,
+    notification_url        varchar(128)   NOT NULL,
+    card_number             varchar(16)    NOT NULL,
+    card_expiration_date    varchar(10)    NOT NULL,
+    card_cvv                int            NOT NULL,
+    language                varchar(64)    NOT NULL,
+    customer_first_name     varchar(64)    NOT NULL,
+    customer_last_name      varchar(64)    NOT NULL,
+    customer_country        varchar(64)    NOT NULL,
+    transactional           boolean        NOT NULL,
+    status                  varchar(16)    NOT NULL,
     message                 text,
 
     CONSTRAINT fk_transaction_merchant_id
@@ -34,10 +34,10 @@ CREATE TABLE IF NOT EXISTS transaction
 
 CREATE TABLE IF NOT EXISTS wallet
 (
-    id          uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-    merchant_id uuid        NOT NULL,
-    currency    varchar(16) NOT NULL,
-    balance     numeric     NOT NULL DEFAULT 0,
+    id          uuid PRIMARY KEY        DEFAULT gen_random_uuid(),
+    merchant_id uuid           NOT NULL,
+    currency    varchar(16)    NOT NULL,
+    balance     numeric(10, 2) NOT NULL DEFAULT 0,
 
     CONSTRAINT fk_wallet_merchant_id
         FOREIGN KEY (merchant_id)
@@ -47,20 +47,20 @@ CREATE TABLE IF NOT EXISTS wallet
 CREATE TABLE IF NOT EXISTS webhook
 (
     id                      uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-    merchant_id             uuid            NOT NULL,
-    merchant_transaction_id uuid            NOT NULL UNIQUE,
-    notification_url        VARCHAR(128)    NOT NULL,
-    payment_method          varchar(64)     NOT NULL,
-    amount                  numeric(10, 20) NOT NULL,
-    currency                varchar(16)     NOT NULL,
+    merchant_id             uuid           NOT NULL,
+    merchant_transaction_id uuid           NOT NULL UNIQUE,
+    notification_url        VARCHAR(128)   NOT NULL,
+    payment_method          varchar(64)    NOT NULL,
+    amount                  numeric(10, 2) NOT NULL,
+    currency                varchar(16)    NOT NULL,
     created_at              timestamp with time zone,
     updated_at              timestamp with time zone,
-    type                    varchar(64)     NOT NULL,
-    card_number             varchar(16)     NOT NULL,
-    language                varchar(64)     NOT NULL,
-    customer_first_name     varchar(64)     NOT NULL,
-    customer_last_name      varchar(64)     NOT NULL,
-    status                  varchar(16)     NOT NULL,
+    type                    varchar(64)    NOT NULL,
+    card_number             varchar(16)    NOT NULL,
+    language                varchar(64)    NOT NULL,
+    customer_first_name     varchar(64)    NOT NULL,
+    customer_last_name      varchar(64)    NOT NULL,
+    status                  varchar(16)    NOT NULL,
     message                 text,
 
     CONSTRAINT fk_webhook_merchant_id

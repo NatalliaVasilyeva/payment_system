@@ -7,7 +7,10 @@ import com.proselyte.fakepaymentprovider.domain.dto.TopUpShotResponseDto;
 import com.proselyte.fakepaymentprovider.domain.exception.DomainResponseException;
 import com.proselyte.fakepaymentprovider.domain.model.PaymentMessage;
 import com.proselyte.fakepaymentprovider.domain.model.PaymentMethod;
+import com.proselyte.fakepaymentprovider.domain.model.SecurityUserDetails;
+import com.proselyte.fakepaymentprovider.domain.service.MerchantService;
 import com.proselyte.fakepaymentprovider.domain.service.PaymentService;
+import com.proselyte.fakepaymentprovider.domain.service.TransactionService;
 import com.proselyte.fakepaymentprovider.infrastructure.util.ReactiveContextHolder;
 import com.proselyte.fakepaymentprovider.infrastructure.util.Validator;
 import io.swagger.v3.oas.annotations.Operation;
@@ -20,6 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -48,12 +52,15 @@ public class TransactionApi {
     private static final String TRANSACTION_URL_NAME = "payments/transaction";
 
     private final PaymentService paymentService;
+    private final TransactionService transactionService;
+    private final MerchantService merchantService;
 
     @PostMapping(value = TRANSACTION_URL_NAME + "/topUp", consumes = MediaType.APPLICATION_JSON_VALUE, produces = {MediaType.APPLICATION_JSON_VALUE})
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Create top up transaction")
 //    @PreAuthorize("hasAnyAuthority('CLIENT', 'USER')")
-    public Mono<TopUpShotResponseDto> topUp(@Valid @RequestBody TopUpRequestDto topUpRequestDto) {
+    public Mono<TopUpShotResponseDto> topUp(@AuthenticationPrincipal SecurityUserDetails user,
+                                            @Valid @RequestBody TopUpRequestDto topUpRequestDto) {
 
         // input validation
         var paymentMethod = topUpRequestDto.paymentMethod();
@@ -69,8 +76,7 @@ public class TransactionApi {
 
         Validator.validateCardExpirationDate(topUpRequestDto.cardData().expDate());
 
-        return ReactiveContextHolder.getMerchantId()
-            .flatMap(id -> paymentService.topUp(topUpRequestDto, id));
+        return paymentService.topUp(topUpRequestDto, user.getId());
 
     }
 
@@ -82,8 +88,9 @@ public class TransactionApi {
     public ApiResponseDto<Flux<TransactionResponseDto>> getTransactions(@RequestParam LocalDateTime start_date,
                                                                        @RequestParam LocalDateTime end_date) {
 
-        return new ApiResponseDto<>(ReactiveContextHolder.getMerchantId()
-            .flatMapMany(id -> paymentService.findAllTransactionsByMerchantIdAndFilter(id, start_date, end_date)));
+        return new ApiResponseDto<>(ReactiveContextHolder.getMerchantClientId()
+            .flatMap(merchantService::findMerchantByClientId)
+            .flatMapMany(merchant -> transactionService.findAllTransactionsByMerchantIdAndFilter(merchant.getId(), start_date, end_date)));
 
     }
 
@@ -93,7 +100,7 @@ public class TransactionApi {
     @PreAuthorize("hasAnyAuthority('CLIENT', 'USER')")
     public Mono<TransactionResponseDto> getTransactionDetails(@Parameter(required = true) @PathVariable @Valid @NotNull UUID uuid) {
 
-       return paymentService.findTransactionById(uuid);
+       return transactionService.findTransactionById(uuid);
 
     }
 

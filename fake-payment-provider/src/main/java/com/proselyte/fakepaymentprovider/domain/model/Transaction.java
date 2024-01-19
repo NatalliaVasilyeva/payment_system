@@ -47,7 +47,7 @@ public class Transaction implements Persistable<UUID> {
 
     private String cardExpirationDate;
 
-    private byte[] cardCvv;
+    private int cardCvv;
 
     private String language;
 

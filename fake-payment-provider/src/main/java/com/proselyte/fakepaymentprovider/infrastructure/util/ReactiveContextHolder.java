@@ -2,8 +2,6 @@ package com.proselyte.fakepaymentprovider.infrastructure.util;
 
 import reactor.core.publisher.Mono;
 
-import java.util.UUID;
-
 public class ReactiveContextHolder {
     public static final String MERCHANT = "merchant";
 
@@ -14,8 +12,8 @@ public class ReactiveContextHolder {
         return Mono.deferContextual(ctx -> Mono.justOrEmpty(ctx.get(key)));
     }
 
-    public static Mono<java.util.UUID> getMerchantId() {
-        return Mono.deferContextual(ctx -> Mono.justOrEmpty(ctx.get(MERCHANT))).cast(UUID.class);
+    public static Mono<String> getMerchantClientId() {
+        return Mono.deferContextual(ctx -> Mono.justOrEmpty(ctx.get(MERCHANT))).cast(String.class);
     }
 
 }

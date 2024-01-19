@@ -25,7 +25,7 @@ public class Merchant implements Persistable<UUID> {
 
     private String clientId;
 
-    private byte [] clientSecret;
+    private String clientSecret;
 
     @Transient
     private boolean isNew = true;

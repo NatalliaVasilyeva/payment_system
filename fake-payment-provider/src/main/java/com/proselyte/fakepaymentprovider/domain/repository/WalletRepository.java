@@ -13,9 +13,9 @@ import java.util.UUID;
 public interface WalletRepository extends R2dbcRepository<Wallet, UUID> {
 
 
-    @Query("SELECT w FROM Wallet w WHERE ww.currency = :currency and w.balance >= :amount)")
-    Mono<Wallet> findAllByCurrencyAndAmount(String currency, BigDecimal amount);
+//    @Query("SELECT w FROM Wallet w WHERE ww.currency = :currency and w.balance >= :amount)")
+    Mono<Wallet> findAllByCurrencyAndBalanceAndMerchantId(String currency, BigDecimal amount, UUID merchantId);
 
-    @Query("SELECT w FROM Wallet w WHERE ww.currency = :currency)")
-    Mono<Wallet> findAllByCurrency(String currency);
+//    @Query("SELECT w FROM Wallet w WHERE w.currency = :currency and w.merhantId = :merchantId)")
+    Mono<Wallet> findAllByCurrencyAndMerchantId(String currency, UUID merchantId);
 }

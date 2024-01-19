@@ -1,6 +1,6 @@
 package com.proselyte.fakepaymentprovider.infrastructure.api;
 
-import com.proselyte.fakepaymentprovider.domain.service.WebhookService;
+import com.proselyte.fakepaymentprovider.domain.service.WebhookExecutionService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +22,7 @@ public class WebhookApi {
     private static final String TRANSACTION_WEBHOOK_URL_NAME = "webhook/transaction";
     private static final String PAYOUT_WEBHOOK_URL_NAME = "webhook/payout";
 
-    private final WebhookService webhookService;
+    private final WebhookExecutionService webhookService;
 
 
     @PostMapping(value = TRANSACTION_WEBHOOK_URL_NAME, consumes = MediaType.APPLICATION_JSON_VALUE, produces = {MediaType.APPLICATION_JSON_VALUE})
@@ -30,7 +30,7 @@ public class WebhookApi {
     @Operation(summary = "Sent notification about transaction operations")
     public void handleTransactionWebhookData() {
 
-        webhookService.executeTransactionWebhook(true);
+        webhookService.executePaymentWebhook(true);
     }
 
     @PostMapping(value = PAYOUT_WEBHOOK_URL_NAME, consumes = MediaType.APPLICATION_JSON_VALUE, produces = {MediaType.APPLICATION_JSON_VALUE})
@@ -38,6 +38,6 @@ public class WebhookApi {
     @Operation(summary = "Sent notification about transaction operations")
     public void handlePayoutWebhookData() {
 
-        webhookService.executeTransactionWebhook(false);
+        webhookService.executePaymentWebhook(false);
     }
 }
