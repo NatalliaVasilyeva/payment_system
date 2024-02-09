@@ -1,19 +1,21 @@
 package com.proselyte.fakepaymentprovider.domain.dto;
 
+import java.util.List;
+
 public class ApiResponseDto<T> {
 
-    private T transaction_list;
+    private List<T> transactionList;
 
     public ApiResponseDto() {
         // base default constructor
     }
 
-    public ApiResponseDto(T results) {
-        this.transaction_list = transaction_list;
+    public ApiResponseDto(List<T> transactionList) {
+        this.transactionList = transactionList;
     }
 
-    public T getResults() {
-        return transaction_list;
+    public List<T> getTransactionList() {
+        return transactionList;
     }
 
 }

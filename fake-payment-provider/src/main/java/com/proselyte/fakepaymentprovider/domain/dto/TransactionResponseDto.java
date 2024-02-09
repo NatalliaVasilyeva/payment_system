@@ -1,6 +1,5 @@
 package com.proselyte.fakepaymentprovider.domain.dto;
 
-
 import com.proselyte.fakepaymentprovider.domain.model.PaymentMessage;
 import com.proselyte.fakepaymentprovider.domain.model.PaymentMethod;
 import com.proselyte.fakepaymentprovider.domain.model.PaymentStatus;

@@ -4,8 +4,6 @@ package com.proselyte.fakepaymentprovider.domain.dto;
 import java.math.BigDecimal;
 import java.util.UUID;
 
-
-//@ParameterObject
 public record PayOutRequestDto(
 
     String paymentMethod,
@@ -22,6 +20,6 @@ public record PayOutRequestDto(
 
     String notificationUrl,
 
-    CustomerRequestDto customerRequestDto
+    CustomerRequestDto customer
     ) {
 }

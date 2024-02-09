@@ -1,0 +1,7 @@
+spring:
+  r2dbc:
+    properties:
+      schema: fake_payment_provider_test
+
+scheduling:
+  enabled: false

@@ -1,7 +1,8 @@
 package com.proselyte.fakepaymentprovider.domain.mapper;
 
 import com.proselyte.fakepaymentprovider.domain.dto.CustomerResponseDto;
-import com.proselyte.fakepaymentprovider.domain.model.Transaction;
+import com.proselyte.fakepaymentprovider.domain.dto.CustomerShortResponseDto;
+import com.proselyte.fakepaymentprovider.domain.entity.Transaction;
 
 public class CustomerMapper {
 
@@ -13,6 +14,13 @@ public class CustomerMapper {
             transaction.getCustomerFirstName(),
             transaction.getCustomerLastName(),
             transaction.getCustomerCountry()
+        );
+    }
+
+    public static CustomerShortResponseDto toCustomerShotResponseDto(Transaction transaction) {
+        return new CustomerShortResponseDto(
+            transaction.getCustomerFirstName(),
+            transaction.getCustomerLastName()
         );
     }
 }

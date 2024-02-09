@@ -1,7 +1,8 @@
 package com.proselyte.fakepaymentprovider.domain.service;
 
 import com.proselyte.fakepaymentprovider.domain.dto.DateFilterDto;
-import com.proselyte.fakepaymentprovider.domain.dto.TransactionResponseDto;
+import com.proselyte.fakepaymentprovider.domain.dto.PayoutResponseDto;
+import com.proselyte.fakepaymentprovider.domain.exception.PayoutBadRequestQueryException;
 import com.proselyte.fakepaymentprovider.domain.exception.TransactionBadRequestQueryException;
 import com.proselyte.fakepaymentprovider.domain.mapper.TransactionMapper;
 import com.proselyte.fakepaymentprovider.domain.model.PaymentMessage;
@@ -21,15 +22,15 @@ import java.util.UUID;
 @Slf4j
 @RequiredArgsConstructor
 @Service
-public class TransactionService {
+public class PayoutService {
 
     private final TransactionRepository transactionRepository;
     private final WalletRepository walletRepository;
 
 
-    public Mono<Transaction> saveSuccessTransaction(Transaction transaction) {
+    public Mono<Transaction> saveSuccessPayout(Transaction transaction) {
         return walletRepository.findAllByCurrencyAndMerchantId(transaction.getCurrency(), transaction.getMerchantId())
-            .switchIfEmpty(Mono.defer(() -> Mono.error(new TransactionBadRequestQueryException(PaymentMessage.TRANSACTION_IS_UNSUCCESSFULLY_NO_WALLET_FOR_CURRENCY_FOUND.name()))))
+            .switchIfEmpty(Mono.defer(() -> Mono.error(new TransactionBadRequestQueryException(PaymentMessage.PAYMENT_IS_UNSUCCESSFULLY_NO_WALLET_FOR_CURRENCY_FOUND.name()))))
             .flatMap(wallet -> {
                 transaction.setMessage(PaymentMessage.OK.name());
                 transaction.setStatus(PaymentStatus.IN_PROGRESS.name());
@@ -38,7 +39,7 @@ public class TransactionService {
             .map(savedTransaction -> savedTransaction);
     }
 
-    public Mono<Transaction> updateTransaction(Transaction transaction) {
+    public Mono<Transaction> updatePayout(Transaction transaction) {
         return walletRepository.findAllByCurrencyAndMerchantId(transaction.getCurrency(), transaction.getMerchantId())
             .flatMap(wallet -> {
                 if (PaymentStatus.isUnsuccessfullState(transaction.getStatus())) {
@@ -46,11 +47,14 @@ public class TransactionService {
                     transaction.setStatus(transaction.getStatus());
                     return transactionRepository.save(transaction);
                 } else {
+                    if (wallet.getBalance().compareTo(transaction.getAmount()) < 0) {
+                        return Mono.error(new PayoutBadRequestQueryException(PaymentMessage.PAYMENT_IS_UNSUCCESSFULLY_BALANCE_NOT_ENOUGH.name()));
+                    }
                     wallet.setBalance(wallet.getBalance().add(transaction.getAmount()));
                     return walletRepository.save(wallet)
                         .flatMap(savedWallet -> {
                             transaction.setMessage(PaymentMessage.OK.name());
-                            transaction.setStatus(PaymentStatus.APPROVED.name());
+                            transaction.setStatus(PaymentStatus.COMPLETED.name());
                             return transactionRepository.save(transaction);
                         });
                 }
@@ -58,17 +62,18 @@ public class TransactionService {
             .map(savedTransaction -> savedTransaction);
     }
 
-    public Flux<TransactionResponseDto> findAllTransactionsByMerchantIdAndFilter(UUID merchantId,
-                                                                                 DateFilterDto dateFilterDto) {
+    public Flux<PayoutResponseDto> findAllPayoutsByMerchantIdAndFilter(UUID merchantId,
+                                                                       DateFilterDto dateFilterDto) {
         var paymentFilter = PaymentFilterUtil.createPaymentFilter(dateFilterDto);
-        return transactionRepository.findAllByPaymentFilterAndType(paymentFilter.getStartDate(), paymentFilter.getEndDate(), merchantId, "transaction")
+        return transactionRepository.findAllByPaymentFilterAndType(paymentFilter.getStartDate(), paymentFilter.getEndDate(), merchantId, "payout")
             .switchIfEmpty(Flux.empty())
             .collectList()
-            .flatMapIterable(TransactionMapper::toTransactionResponseDtoList);
+            .flatMapIterable(TransactionMapper::toPayoutResponseDtoList);
     }
 
-    public Mono<TransactionResponseDto> findTransactionById(UUID transactionId) {
-        return transactionRepository.findById(transactionId)
-            .map(TransactionMapper::toTransactionResponseDto);
+    public Mono<PayoutResponseDto> findPayoutById(UUID payoutId) {
+        return transactionRepository.findById(payoutId)
+            .map(TransactionMapper::toPayoutResponseDto);
     }
+
 }

@@ -1,4 +1,4 @@
-package com.proselyte.fakepaymentprovider.domain.model;
+package com.proselyte.fakepaymentprovider.domain.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -47,7 +47,7 @@ public class Transaction implements Persistable<UUID> {
 
     private String cardExpirationDate;
 
-    private int cardCvv;
+    private Integer cardCvv;
 
     private String language;
 
@@ -57,7 +57,7 @@ public class Transaction implements Persistable<UUID> {
 
     private String customerCountry;
 
-    private boolean transactional;
+    private String type;
 
     private String status;
 

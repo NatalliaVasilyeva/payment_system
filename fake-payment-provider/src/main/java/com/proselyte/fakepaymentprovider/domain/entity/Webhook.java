@@ -1,4 +1,4 @@
-package com.proselyte.fakepaymentprovider.domain.model;
+package com.proselyte.fakepaymentprovider.domain.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -31,6 +31,8 @@ public class Webhook implements Persistable<UUID> {
 
     private UUID merchantTransactionId;
 
+    private UUID providerTransactionId;
+
     private String notificationUrl;
 
     private String paymentMethod;
@@ -57,7 +59,11 @@ public class Webhook implements Persistable<UUID> {
 
     private String status;
 
-    private  String message;
+    private String message;
+
+    private int attempt;
+
+    private String notificationResult;
 
     @Transient
     private boolean isNew = true;

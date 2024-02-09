@@ -34,3 +34,6 @@ service:
 
 webClient:
   readWriteTimeoutMs: 20000
+
+scheduling:
+  enabled: true

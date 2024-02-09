@@ -5,14 +5,13 @@ import com.proselyte.fakepaymentprovider.domain.dto.PayOutShotResponseDto;
 import com.proselyte.fakepaymentprovider.domain.dto.TopUpRequestDto;
 import com.proselyte.fakepaymentprovider.domain.dto.TopUpShotResponseDto;
 import com.proselyte.fakepaymentprovider.domain.mapper.TransactionMapper;
-import com.proselyte.fakepaymentprovider.domain.mapper.WebhookMapper;
-import com.proselyte.fakepaymentprovider.domain.model.PaymentMessage;
-import com.proselyte.fakepaymentprovider.domain.model.PaymentStatus;
-import com.proselyte.fakepaymentprovider.domain.model.Transaction;
+import com.proselyte.fakepaymentprovider.domain.entity.Transaction;
+import com.proselyte.fakepaymentprovider.domain.repository.TransactionRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.reactive.TransactionalOperator;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.UUID;
@@ -23,42 +22,40 @@ import java.util.UUID;
 public class PaymentService {
 
     private final TransactionService transactionService;
-    private final WebhookService webhookService;
+    private final TransactionRepository transactionRepository;
+    private final PayoutService payoutService;
     private final TransactionalOperator transactionalOperator;
-    private final NotificationService notificationService;
-
 
     public Mono<TopUpShotResponseDto> topUp(TopUpRequestDto topUpRequestDto, UUID merchantId) {
         return transactionalOperator.transactional(Mono.just(topUpRequestDto)
             .map(dto -> TransactionMapper.toTransaction(dto, merchantId))
             .flatMap(transaction -> transactionService.saveSuccessTransaction(transaction)
-                .onErrorResume(error -> {
-                    transaction.setMessage(PaymentMessage.TRANSACTION_IS_UNSUCCESSFULLY_NO_WALLET_FOR_CURRENCY_FOUND.name());
-                    transaction.setStatus(PaymentStatus.FAILED.name());
-                    return transactionService.save(transaction)
-                        .flatMap(savedTransaction -> webhookService.saveWebhook(WebhookMapper.toWebhook(savedTransaction))
-                            .flatMap(notificationService::notify)
-                            .onErrorResume(err -> {
-                                return Mono.defer(Mono::empty);
-                            }))
-//                            .then(Mono.fromCallable(() -> savedTransaction)))
-                        .then(Mono.defer(() -> Mono.error(error)));
-                })
-                .flatMap(savedTransaction -> webhookService.saveWebhook(WebhookMapper.toWebhook(savedTransaction))
-                    .flatMap(notificationService::notify)
-                    .then(Mono.fromCallable(() -> savedTransaction)))
+                .onErrorResume(error -> Mono.defer(() -> Mono.error(error)))
                 .map(TransactionMapper::toTopUpShotResponseDto)));
     }
 
-    public Mono<Transaction> update(Transaction transaction) {
-        return transactionalOperator.transactional(transactionService.updateTransaction(transaction)
-            .flatMap(savedTransaction -> webhookService.saveWebhook(WebhookMapper.toWebhook(savedTransaction))
-                .flatMap(notificationService::notify)
-                .then(Mono.just(savedTransaction))));
+    public Mono<PayOutShotResponseDto> payOut(PayOutRequestDto payOutRequestDto, UUID merchantId) {
+        return transactionalOperator.transactional(Mono.just(payOutRequestDto)
+            .map(dto -> TransactionMapper.toTransaction(dto, merchantId))
+            .flatMap(transaction -> payoutService.saveSuccessPayout(transaction)
+                .onErrorResume(error -> Mono.defer(() -> Mono.error(error)))
+                .map(TransactionMapper::toPayOutShotResponseDto)));
     }
 
-    public Mono<PayOutShotResponseDto> payOut(PayOutRequestDto payOutRequestDto) {
+    public Mono<Transaction> update(Transaction transaction) {
+        return transactionalOperator.transactional(
+            Mono.just(transaction)
+                .flatMap(tr -> {
+                    if ("transaction".equals(transaction.getType())) {
+                        return transactionService.updateTransaction(transaction);
+                    } else {
+                        return payoutService.updatePayout(transaction);
+                    }
+                })
+                .map(savedTransaction -> savedTransaction));
+    }
 
-        return Mono.empty();
+    public Flux<Transaction> findAllInProgressByType(String type) {
+        return transactionRepository.findAllInProgressByType(type);
     }
 }

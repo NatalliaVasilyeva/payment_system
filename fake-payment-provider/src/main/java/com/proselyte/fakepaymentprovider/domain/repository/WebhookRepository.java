@@ -1,6 +1,6 @@
 package com.proselyte.fakepaymentprovider.domain.repository;
 
-import com.proselyte.fakepaymentprovider.domain.model.Webhook;
+import com.proselyte.fakepaymentprovider.domain.entity.Webhook;
 import org.springframework.data.r2dbc.repository.R2dbcRepository;
 import org.springframework.stereotype.Repository;
 

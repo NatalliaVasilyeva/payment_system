@@ -1,6 +1,6 @@
 package com.proselyte.fakepaymentprovider.domain.repository;
 
-import com.proselyte.fakepaymentprovider.domain.model.Merchant;
+import com.proselyte.fakepaymentprovider.domain.entity.Merchant;
 import org.springframework.data.r2dbc.repository.R2dbcRepository;
 import reactor.core.publisher.Mono;
 

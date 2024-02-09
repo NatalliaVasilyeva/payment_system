@@ -17,13 +17,13 @@ CREATE TABLE IF NOT EXISTS transaction
     updated_at              timestamp with time zone,
     notification_url        varchar(128)   NOT NULL,
     card_number             varchar(16)    NOT NULL,
-    card_expiration_date    varchar(10)    NOT NULL,
-    card_cvv                int            NOT NULL,
+    card_expiration_date    varchar(10),
+    card_cvv                integer         ,
     language                varchar(64)    NOT NULL,
     customer_first_name     varchar(64)    NOT NULL,
     customer_last_name      varchar(64)    NOT NULL,
     customer_country        varchar(64)    NOT NULL,
-    transactional           boolean        NOT NULL,
+    type                    varchar(64)    NOT NULL,
     status                  varchar(16)    NOT NULL,
     message                 text,
 
@@ -48,7 +48,8 @@ CREATE TABLE IF NOT EXISTS webhook
 (
     id                      uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     merchant_id             uuid           NOT NULL,
-    merchant_transaction_id uuid           NOT NULL UNIQUE,
+    merchant_transaction_id uuid           NOT NULL,
+    provider_transaction_id uuid           NOT NULL,
     notification_url        VARCHAR(128)   NOT NULL,
     payment_method          varchar(64)    NOT NULL,
     amount                  numeric(10, 2) NOT NULL,
@@ -62,6 +63,10 @@ CREATE TABLE IF NOT EXISTS webhook
     customer_last_name      varchar(64)    NOT NULL,
     status                  varchar(16)    NOT NULL,
     message                 text,
+    attempt                 int NOT NULL,
+    notification_result     varchar(16) NOT NULL,
+
+    UNIQUE(provider_transaction_id, attempt),
 
     CONSTRAINT fk_webhook_merchant_id
         FOREIGN KEY (merchant_id)

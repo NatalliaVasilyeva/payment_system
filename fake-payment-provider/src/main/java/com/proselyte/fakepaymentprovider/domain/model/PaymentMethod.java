@@ -8,9 +8,9 @@ public enum PaymentMethod {
     CASH;
 
 
-    public static final List<PaymentMethod> ALLOWED_PAYMENT_STATUS = List.of(CARD, CASH);
+    public static final List<String> ALLOWED_PAYMENT_STATUS = List.of("CARD", "CASH");
 
     public static boolean isValidPaymentMethod(String paymentMethod) {
-        return ALLOWED_PAYMENT_STATUS.contains(PaymentMethod.valueOf(paymentMethod));
+        return ALLOWED_PAYMENT_STATUS.contains(paymentMethod);
     }
 }

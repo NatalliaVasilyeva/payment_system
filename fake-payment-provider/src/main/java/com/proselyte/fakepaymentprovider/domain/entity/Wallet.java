@@ -1,4 +1,4 @@
-package com.proselyte.fakepaymentprovider.domain.model;
+package com.proselyte.fakepaymentprovider.domain.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

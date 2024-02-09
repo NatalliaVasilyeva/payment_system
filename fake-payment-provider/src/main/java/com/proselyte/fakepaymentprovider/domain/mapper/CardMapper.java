@@ -1,7 +1,7 @@
 package com.proselyte.fakepaymentprovider.domain.mapper;
 
 import com.proselyte.fakepaymentprovider.domain.dto.CardResponseDto;
-import com.proselyte.fakepaymentprovider.domain.model.Transaction;
+import com.proselyte.fakepaymentprovider.domain.entity.Transaction;
 
 public class CardMapper {
 

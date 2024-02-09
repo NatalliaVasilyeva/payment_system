@@ -2,8 +2,7 @@ package com.proselyte.fakepaymentprovider.domain.mapper;
 
 import com.proselyte.fakepaymentprovider.domain.dto.MerchantRequestDto;
 import com.proselyte.fakepaymentprovider.domain.dto.MerchantResponseDto;
-import com.proselyte.fakepaymentprovider.domain.model.Merchant;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import com.proselyte.fakepaymentprovider.domain.entity.Merchant;
 
 public class MerchantMapper {
 

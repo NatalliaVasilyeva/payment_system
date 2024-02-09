@@ -1,6 +1,6 @@
 package com.proselyte.fakepaymentprovider.domain.service;
 
-import com.proselyte.fakepaymentprovider.domain.model.Webhook;
+import com.proselyte.fakepaymentprovider.domain.entity.Webhook;
 import com.proselyte.fakepaymentprovider.domain.repository.WebhookRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,7 +14,7 @@ public class WebhookService {
 
     private final WebhookRepository webhookRepository;
 
-    public Mono<Webhook> saveWebhook(Webhook webhook) {
+    public Mono<Webhook> createWebhook(Webhook webhook) {
         return Mono.just(webhook)
             .flatMap(webhookRepository::save);
     }

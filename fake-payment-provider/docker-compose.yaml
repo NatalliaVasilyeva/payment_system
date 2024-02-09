@@ -1,21 +1,21 @@
 version: "3.8"
 services:
-#  fake-payment-provider-app:
-#    platform: linux/amd64/v8
-#    build:
-#      context: .
-#      dockerfile: Dockerfile
-#    container_name: fake-payment-provider
-#    restart: always
-#    network_mode: bridge
-#    ports:
-#      - "8090:8090"
-#    environment:
-#      SPRING_R2DBC_URL: jdbc:postgresql://fake-payment-provider-db/fake-payment-provider
-#      SPRING_R2DBC_URL_USERNAME: payment-provider
-#      SPRING_R2DBC_URL_PASSWORD: payment-provider
-#    depends_on:
-#      - fake-payment-provider-db
+  fake-payment-provider-app:
+    platform: linux/amd64/v8
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: fake-payment-provider
+    restart: always
+    network_mode: bridge
+    ports:
+      - "8090:8090"
+    environment:
+      SPRING_R2DBC_URL: jdbc:postgresql://fake-payment-provider-db/fake-payment-provider
+      SPRING_R2DBC_URL_USERNAME: payment-provider
+      SPRING_R2DBC_URL_PASSWORD: payment-provider
+    depends_on:
+      - fake-payment-provider-db
 
   fake-payment-provider-db:
     platform: linux/amd64/v8

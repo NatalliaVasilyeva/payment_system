@@ -1,9 +1,6 @@
 package com.proselyte.fakepaymentprovider.infrastructure.connector;
 
-import com.proselyte.fakepaymentprovider.domain.exception.NotificationException;
-import com.proselyte.fakepaymentprovider.domain.model.Webhook;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
+import com.proselyte.fakepaymentprovider.domain.dto.WebhookShotRequestDto;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
@@ -20,10 +17,9 @@ public class NotificationConnector extends Connector {
 
     public Mono<Void> sentNotificationRequest(String url,
                                               Map<String, String> headers,
-                                              Webhook body) {
+                                              WebhookShotRequestDto body) {
 
         return sentPostRequest(url, headers, body)
-//            .onStatus(HttpStatusCode::isError, clientResponse -> Mono.error(new NotificationException(HttpStatus.INTERNAL_SERVER_ERROR, "Notification was not delivered successfully")))
             .bodyToMono(Void.class);
     }
 }
